@@ -63,7 +63,8 @@ Budget: ${body.budget}
 Project goals:
 ${body.message}`,
     });
-  } catch {
+  } catch (error) {
+    console.error("Failed to send quote request email:", error);
     return NextResponse.json(
       { message: "Failed to send quote request. Please try again later." },
       { status: 500 }
