@@ -49,19 +49,26 @@ export async function POST(request: Request) {
     },
   });
 
-  await transporter.sendMail({
-    from: process.env.SMTP_USER,
-    to: process.env.QUOTE_TO_EMAIL,
-    replyTo: body.email,
-    subject: `New quote request from ${body.company}`,
-    text: `Name: ${body.name}
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to: process.env.QUOTE_TO_EMAIL,
+      replyTo: body.email,
+      subject: `New quote request from ${body.company}`,
+      text: `Name: ${body.name}
 Email: ${body.email}
 Company: ${body.company}
 Budget: ${body.budget}
 
 Project goals:
 ${body.message}`,
-  });
+    });
+  } catch {
+    return NextResponse.json(
+      { message: "Failed to send quote request. Please try again later." },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json({ message: "Quote request sent." });
 }
